@@ -105,22 +105,136 @@
   .btn-analyze:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
   .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Result */
+  /* Result Section */
   .result-section {
-    background: #fff; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    display: none;
+    display: none; margin-bottom: 1.5rem;
   }
   .result-section.show { display: block; }
-  .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-  .result-header h3 { font-size: 1rem; }
+
+  /* ===== 摘要仪表盘 ===== */
+  .dashboard {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .dash-card {
+    background: #fff; border-radius: 10px; padding: 1rem; text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+    transition: transform 0.15s;
+  }
+  .dash-card:hover { transform: translateY(-2px); }
+  .dash-card .dash-value { font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .dash-card .dash-label { font-size: 0.72rem; color: #6b7280; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .dash-card.warn  .dash-value { color: #f59e0b; }
+  .dash-card.danger .dash-value { color: #ef4444; }
+  .dash-card.ok     .dash-value { color: #10b981; }
+  .dash-card.info   .dash-value { color: #3b82f6; }
+
+  /* 质量评分条 */
+  .quality-bar-wrap { margin-top: 0.5rem; }
+  .quality-bar {
+    height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;
+  }
+  .quality-bar-fill {
+    height: 100%; border-radius: 3px; transition: width 0.6s ease;
+  }
+  .quality-label { font-size: 0.7rem; color: #6b7280; margin-top: 0.2rem; }
+
+  /* ===== 模块卡片 ===== */
+  .report-modules { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .module-card {
+    background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9; overflow: hidden; transition: box-shadow 0.2s;
+  }
+  .module-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  .module-header {
+    display: flex; align-items: center; gap: 0.6rem; padding: 1rem 1.15rem;
+    cursor: pointer; user-select: none; border-bottom: 1px solid transparent;
+    transition: background 0.15s;
+  }
+  .module-header:hover { background: #fafbfc; }
+  .module-card.open .module-header { border-bottom-color: #f1f5f9; }
+
+  .module-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .module-icon.damage    { background: #fef2f2; color: #dc2626; }
+  .module-icon.detail    { background: #fffbeb; color: #d97706; }
+  .module-icon.edge      { background: #eff6ff; color: #2563eb; }
+  .module-icon.cv        { background: #f0fdf4; color: #16a34a; }
+  .module-icon.summary   { background: #faf5ff; color: #7c3aed; }
+
+  .module-title { font-size: 0.95rem; font-weight: 700; flex: 1; }
+  .module-arrow {
+    font-size: 0.7rem; color: #9ca3af; transition: transform 0.25s;
+  }
+  .module-card.open .module-arrow { transform: rotate(90deg); }
+
+  .module-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
+    font-size: 0.88rem; line-height: 1.75; color: #374151;
+  }
+  .module-card.open .module-body {
+    max-height: 3000px; padding: 1rem 1.15rem 1.25rem;
+  }
+  .module-body p { margin-bottom: 0.6rem; }
+  .module-body ul, .module-body ol { margin: 0.4rem 0 0.6rem 1.2rem; }
+  .module-body li { margin-bottom: 0.3rem; }
+  .module-body strong { color: #111827; }
+  .module-body h4 { font-size: 0.85rem; margin: 0.8rem 0 0.3rem; color: #4f46e5; }
+
+  /* 严重程度 badge */
+  .sev-badge {
+    display: inline-block; padding: 0.15rem 0.55rem; border-radius: 12px;
+    font-size: 0.75rem; font-weight: 700; margin-left: 0.3rem;
+  }
+  .sev-badge.low    { background: #d1fae5; color: #065f46; }
+  .sev-badge.medium { background: #fef3c7; color: #92400e; }
+  .sev-badge.high   { background: #fee2e2; color: #991b1b; }
+
+  /* 结果表 */
+  .damage-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 0.5rem 0;
+  }
+  .damage-table th {
+    background: #f8fafc; padding: 0.5rem 0.7rem; text-align: left; font-weight: 600;
+    font-size: 0.75rem; color: #64748b; border-bottom: 2px solid #e2e8f0;
+  }
+  .damage-table td {
+    padding: 0.45rem 0.7rem; border-bottom: 1px solid #f1f5f9;
+  }
+  .damage-table tr:hover td { background: #fafbfc; }
+
+  /* 导出按钮 */
+  .report-toolbar {
+    display: flex; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.75rem;
+  }
   .btn-export {
     padding: 0.4rem 1rem; font-size: 0.8rem; border: 1.5px solid #4f46e5; color: #4f46e5;
     background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600;
+    transition: all 0.15s;
   }
-  .result-content {
+  .btn-export:hover { background: #4f46e5; color: #fff; }
+
+  /* 回退纯文本区 */
+  .result-raw {
     font-size: 0.9rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word;
     padding: 1rem; background: #f9fafb; border-radius: 8px; max-height: 600px; overflow-y: auto;
   }
+
+  /* 标签云 */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0; }
+  .tag-chip {
+    padding: 0.2rem 0.6rem; border-radius: 14px; font-size: 0.75rem; font-weight: 600;
+  }
+  .tag-chip.red    { background: #fee2e2; color: #991b1b; }
+  .tag-chip.orange { background: #fff7ed; color: #c2410c; }
+  .tag-chip.yellow { background: #fefce8; color: #a16207; }
+  .tag-chip.blue   { background: #dbeafe; color: #1e40af; }
+  .tag-chip.green  { background: #d1fae5; color: #065f46; }
+  .tag-chip.gray   { background: #f3f4f6; color: #4b5563; }
 
   /* Loading */
   .loading-overlay {
@@ -208,11 +322,16 @@
 
   <!-- Result -->
   <div class="result-section" id="resultSection">
-    <div class="result-header">
-      <h3>检测报告</h3>
+    <div class="report-toolbar">
       <button class="btn-export" onclick="exportReport()">导出 Markdown</button>
+      <button class="btn-export" onclick="toggleViewMode()" id="btnViewMode" style="border-color:#6b7280;color:#6b7280;">切换纯文本</button>
     </div>
-    <div class="result-content" id="resultContent"></div>
+    <!-- 摘要仪表盘 -->
+    <div class="dashboard" id="dashboard"></div>
+    <!-- 模块化卡片 -->
+    <div class="report-modules" id="reportModules"></div>
+    <!-- 纯文本回退 -->
+    <div class="result-raw" id="resultRaw" style="display:none;"></div>
   </div>
 </div>
 
@@ -603,7 +722,7 @@ async function analyze() {
     var content = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '（未获取到结果）';
     
     state.lastResult = content;
-    document.getElementById('resultContent').textContent = content;
+    renderResult(content);
     resultSection.classList.add('show');
     resultSection.scrollIntoView({ behavior: 'smooth' });
     showToast('分析完成！', 'success');
@@ -634,6 +753,224 @@ function exportReport() {
   a.click();
   URL.revokeObjectURL(url);
   showToast('报告已导出', 'success');
+}
+
+// ============ 模块化报告渲染 ============
+
+var viewMode = 'modules'; // 'modules' | 'raw'
+
+function toggleViewMode() {
+  viewMode = (viewMode === 'modules') ? 'raw' : 'modules';
+  document.getElementById('btnViewMode').textContent = (viewMode === 'modules') ? '切换纯文本' : '切换模块';
+  if (state.lastResult) renderResult(state.lastResult);
+}
+
+function renderResult(text) {
+  // 存原始文本到隐藏区
+  document.getElementById('resultRaw').textContent = text;
+
+  if (viewMode === 'raw') {
+    document.getElementById('dashboard').innerHTML = '';
+    document.getElementById('reportModules').innerHTML = '';
+    document.getElementById('resultRaw').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('resultRaw').style.display = 'none';
+
+  // 解析五章内容
+  var chapters = parseChapters(text);
+
+  // 渲染仪表盘
+  renderDashboard(chapters, text);
+
+  // 渲染模块卡片
+  renderModules(chapters);
+}
+
+function parseChapters(text) {
+  var chapters = {};
+  // 按 "一、" "二、" 等分割
+  var markers = ['一、', '二、', '三、', '四、', '五、'];
+  var keys = ['damage', 'detail', 'edge', 'cv', 'summary'];
+  
+  for (var i = 0; i < markers.length; i++) {
+    var start = text.indexOf(markers[i]);
+    if (start === -1) continue;
+    var end = text.length;
+    for (var j = i + 1; j < markers.length; j++) {
+      var nextIdx = text.indexOf(markers[j], start + 2);
+      if (nextIdx !== -1) { end = nextIdx; break; }
+    }
+    chapters[keys[i]] = text.slice(start, end).trim();
+  }
+
+  // 如果没有找到任何章节标记，整段当做一个卡片
+  if (Object.keys(chapters).length === 0) {
+    chapters.damage = text;
+  }
+
+  return chapters;
+}
+
+function renderDashboard(chapters, fullText) {
+  var html = '';
+
+  // 损伤数量
+  var damageCount = countDamageTypes(fullText);
+  html += '<div class="dash-card ' + (damageCount > 3 ? 'danger' : damageCount > 1 ? 'warn' : 'ok') + '">';
+  html += '<div class="dash-value">' + (damageCount || '?') + '</div>';
+  html += '<div class="dash-label">检测到损伤类型</div></div>';
+
+  // 严重程度
+  var sev = extractSeverity(fullText);
+  var sevClass = 'ok', sevText = '轻微';
+  if (sev.includes('严重') || sev.includes('重度')) { sevClass = 'danger'; sevText = '严重'; }
+  else if (sev.includes('中等') || sev.includes('中度')) { sevClass = 'warn'; sevText = '中等'; }
+  html += '<div class="dash-card ' + sevClass + '">';
+  html += '<div class="dash-value" style="font-size:1.3rem;">' + sevText + '</div>';
+  html += '<div class="dash-label">最高严重程度</div></div>';
+
+  // 图像质量评分
+  var score = extractScore(fullText);
+  var barColor = score >= 7 ? '#10b981' : score >= 4 ? '#f59e0b' : '#ef4444';
+  html += '<div class="dash-card info">';
+  html += '<div class="dash-value">' + (score || '?') + '<span style="font-size:0.8rem;font-weight:400;">/10</span></div>';
+  html += '<div class="dash-label">图像质量评分</div>';
+  html += '<div class="quality-bar-wrap"><div class="quality-bar"><div class="quality-bar-fill" style="width:' + ((score || 0) * 10) + '%;background:' + barColor + ';"></div></div></div>';
+  html += '</div>';
+
+  // 适合CV模型
+  var cvSuitable = isCVSuitable(fullText);
+  html += '<div class="dash-card ' + (cvSuitable ? 'ok' : 'warn') + '">';
+  html += '<div class="dash-value" style="font-size:1.3rem;">' + (cvSuitable ? '适用' : '需处理') + '</div>';
+  html += '<div class="dash-label">传统CV适用性</div></div>';
+
+  document.getElementById('dashboard').innerHTML = html;
+}
+
+function renderModules(chapters) {
+  var modules = [
+    { key: 'damage',  icon: '🔍', cls: 'damage',  title: '一、损伤检测结果',   defaultOpen: true },
+    { key: 'detail',  icon: '📋', cls: 'detail',  title: '二、损伤详情评估',   defaultOpen: true },
+    { key: 'edge',    icon: '🎯', cls: 'edge',    title: '三、边缘场景分析',   defaultOpen: true },
+    { key: 'cv',      icon: '🤖', cls: 'cv',      title: '四、CV模型矫正与检验建议', defaultOpen: false },
+    { key: 'summary', icon: '💡', cls: 'summary', title: '五、综合建议',       defaultOpen: false }
+  ];
+
+  var html = '';
+  for (var i = 0; i < modules.length; i++) {
+    var m = modules[i];
+    var content = chapters[m.key];
+    if (!content) continue;
+
+    // 去掉章节标题本身（因为已经在卡片标题中了）
+    var bodyText = content.replace(/^[一二三四五]、[^\n]*\n?/, '').trim();
+    // 格式化 markdown 为 HTML
+    var bodyHtml = formatMarkdown(bodyText);
+
+    html += '<div class="module-card' + (m.defaultOpen ? ' open' : '') + '">';
+    html += '<div class="module-header" onclick="toggleModule(this)">';
+    html += '<div class="module-icon ' + m.cls + '">' + m.icon + '</div>';
+    html += '<div class="module-title">' + m.title + '</div>';
+    html += '<div class="module-arrow">▶</div>';
+    html += '</div>';
+    html += '<div class="module-body">' + bodyHtml + '</div>';
+    html += '</div>';
+  }
+
+  document.getElementById('reportModules').innerHTML = html;
+}
+
+function toggleModule(header) {
+  var card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+// ---- 解析辅助函数 ----
+
+function countDamageTypes(text) {
+  var types = ['裂缝', '坑槽', '车辙', '松散', '剥落', '修补', '沉陷', '隆起', '泛油', '龟裂', '块裂', '横向裂缝', '纵向裂缝'];
+  var found = 0;
+  for (var i = 0; i < types.length; i++) {
+    if (text.indexOf(types[i]) !== -1) found++;
+  }
+  return found || null;
+}
+
+function extractSeverity(text) {
+  var lower = text;
+  if (lower.indexOf('严重') !== -1 || lower.indexOf('重度') !== -1) return '严重';
+  if (lower.indexOf('中等') !== -1 || lower.indexOf('中度') !== -1) return '中等';
+  if (lower.indexOf('轻微') !== -1 || lower.indexOf('轻度') !== -1) return '轻微';
+  return '未明确';
+}
+
+function extractScore(text) {
+  var m = text.match(/质量评分[：:]\s*(\d+)/) || text.match(/(\d+)\s*分/) || text.match(/评分[：:]\s*(\d+)/);
+  if (m) return parseInt(m[1]);
+  // 尝试 "X/10" 格式
+  m = text.match(/(\d+)\s*\/\s*10/);
+  if (m) return parseInt(m[1]);
+  return null;
+}
+
+function isCVSuitable(text) {
+  var lower = text;
+  if (lower.indexOf('不适合') !== -1 || lower.indexOf('不建议直接') !== -1 || lower.indexOf('需要预处理') !== -1) return false;
+  if (lower.indexOf('适合直接') !== -1 || lower.indexOf('可以直接') !== -1 || lower.indexOf('适用于') !== -1) return true;
+  return null; // 不确定
+}
+
+function formatMarkdown(md) {
+  if (!md) return '';
+
+  var html = md;
+
+  // 处理表格
+  html = html.replace(/\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g, function(match, header, rows) {
+    var hcols = header.split('|').map(function(c) { return c.trim(); }).filter(Boolean);
+    var thead = '<thead><tr>' + hcols.map(function(c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead>';
+    var rlines = rows.trim().split('\n');
+    var tbody = '<tbody>' + rlines.map(function(r) {
+      var cols = r.split('|').map(function(c) { return c.trim(); }).filter(Boolean);
+      return '<tr>' + cols.map(function(c) { return '<td>' + c + '</td>'; }).join('') + '</tr>';
+    }).join('') + '</tbody>';
+    return '<table class="damage-table">' + thead + tbody + '</table>';
+  });
+
+  // 处理标题
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^## (.+)$/gm, '<h4>$1</h4>');
+
+  // 处理粗体
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // 处理列表
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/^• (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+  // 包裹连续 li
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+  // 段落：连续的非空行
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>' + html + '</p>';
+  // 清理空段落
+  html = html.replace(/<p>\s*<\/p>/g, '');
+  html = html.replace(/<p>(<[^p])/g, '$1');
+  html = html.replace(/(<\/[^p]>)(<\/p>)/g, '$1');
+
+  // 高亮严重程度
+  html = html.replace(/严重/g, '<span class="sev-badge high">严重</span>');
+  html = html.replace(/中等/g, '<span class="sev-badge medium">中等</span>');
+  html = html.replace(/轻微/g, '<span class="sev-badge low">轻微</span>');
+
+  // 清理多余换行
+  html = html.replace(/\n/g, ' ');
+
+  return html;
 }
 
 // ============ 启动 ============
