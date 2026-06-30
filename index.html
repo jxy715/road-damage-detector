@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>路面损伤检测智能体 - Road Damage Inspector</title>
+  <meta name="description" content="基于阿里云通义千问大模型的泛化路面损伤检测智能体，支持边缘场景分析与CV模型校准">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>路面损伤检测智能体</h1>
+    <p class="subtitle">Road Damage Detection Agent — 基于通义千问 qwen-vl 视觉大模型</p>
+    <div class="badge-row">
+      <span class="badge">泛化检测</span>
+      <span class="badge">边缘场景分析</span>
+      <span class="badge">CV模型校准</span>
+      <span class="badge">AI4S 课程项目</span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- API Configuration -->
+    <section class="card">
+      <div class="card-header">
+        <div class="icon">&#9881;</div>
+        <h2>API 配置</h2>
+      </div>
+      <div class="api-key-row">
+        <input type="password" id="apiKeyInput" placeholder="请输入阿里云 DashScope API Key (sk-...)" autocomplete="off">
+        <button class="btn btn-primary" id="saveApiKey">保存</button>
+        <button class="btn btn-outline" id="clearApiKey">清除</button>
+      </div>
+      <div id="apiStatus" class="api-status disconnected">未配置 API Key</div>
+      <div style="margin-top: 0.75rem; padding: 0.6rem 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 0.82rem; color: #1e40af; line-height: 1.6;">
+        <strong>&#128161; 启动方式：</strong><br>
+        在项目目录下运行 <code style="background:#dbeafe;padding:1px 6px;border-radius:4px;">python app.py</code>，然后访问 <code style="background:#dbeafe;padding:1px 6px;border-radius:4px;">http://127.0.0.1:5000</code><br>
+        <span style="color:#3b82f6;">一体化服务器自动处理 CORS 代理，无需额外配置</span>
+      </div>
+    </section>
+
+    <!-- Image Upload -->
+    <section class="card">
+      <div class="card-header">
+        <div class="icon">&#128247;</div>
+        <h2>上传路面图像</h2>
+      </div>
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">&#128196;</div>
+        <p>点击或拖拽上传路面图片</p>
+        <p class="upload-hint">支持 JPG、PNG、WebP、BMP 格式，最大 10MB</p>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/bmp" hidden>
+      </div>
+
+      <div class="preview-section" id="previewSection">
+        <div class="preview-container">
+          <img id="previewImage" src="" alt="路面图像预览">
+        </div>
+        <div class="preview-toolbar">
+          <span class="image-info" id="imageInfo"></span>
+          <button class="btn btn-outline" id="removeImage">移除图片</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Edge Scenario Options -->
+    <section class="card">
+      <div class="card-header">
+        <div class="icon">&#9888;</div>
+        <h2>边缘场景增强模式（可选）</h2>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+        选择需要特别关注的边缘场景，智能体将在检测时进行针对性分析：
+      </p>
+      <div class="edge-options">
+        <label class="edge-option">
+          <input type="checkbox" value="低光照">
+          低光照 / 夜间
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="运动模糊">
+          运动模糊
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="遮挡">
+          部分遮挡
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="雨雪天气">
+          雨雪 / 积水
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="阴影干扰">
+          阴影干扰
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="低分辨率">
+          低分辨率
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="相似纹理混淆">
+          纹理混淆
+        </label>
+        <label class="edge-option">
+          <input type="checkbox" value="视角倾斜">
+          视角倾斜
+        </label>
+      </div>
+    </section>
+
+    <!-- Analyze Button -->
+    <button class="btn btn-primary analyze-btn" id="analyzeBtn">
+      <span class="spinner"></span>
+      <span class="btn-text">开始路面损伤检测分析</span>
+      <span class="btn-loading-text">分析中，请稍候...</span>
+    </button>
+
+    <!-- Results Section -->
+    <section class="results-section" id="resultsSection">
+      <!-- Summary -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon">&#128202;</div>
+          <h2>检测概览</h2>
+        </div>
+        <div class="results-summary">
+          <div class="summary-card info">
+            <div class="count" id="totalCount">0</div>
+            <div class="label">损伤总数</div>
+          </div>
+          <div class="summary-card danger">
+            <div class="count" id="highCount">0</div>
+            <div class="label">严重损伤</div>
+          </div>
+          <div class="summary-card warning">
+            <div class="count" id="mediumCount">0</div>
+            <div class="label">中等损伤</div>
+          </div>
+          <div class="summary-card info">
+            <div class="count" id="lowCount">0</div>
+            <div class="label">轻微损伤</div>
+          </div>
+          <div class="summary-card edge">
+            <div class="count" id="edgeCount">0</div>
+            <div class="label">边缘场景</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Damage Details -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon">&#128270;</div>
+          <h2>损伤详情</h2>
+        </div>
+        <div id="damageList"></div>
+      </div>
+
+      <!-- Edge Analysis -->
+      <div class="card edge-analysis" id="edgeAnalysis" style="display:none;"></div>
+
+      <!-- Model Calibration -->
+      <div class="card calibration-section" id="calibrationSection" style="display:none;"></div>
+
+      <!-- Overall Assessment -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon">&#128221;</div>
+          <h2>整体评估</h2>
+        </div>
+        <p id="overallAssessment" style="color: var(--text-secondary); line-height: 1.8;"></p>
+      </div>
+
+      <!-- Raw Response -->
+      <div class="card">
+        <div class="raw-response">
+          <details>
+            <summary>查看原始响应 (JSON)</summary>
+            <pre id="rawResponse"></pre>
+          </details>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="export-buttons">
+        <button class="btn btn-primary" id="exportReport">导出检测报告 (Markdown)</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <p>AI 正在分析路面图像...</p>
+      <p style="font-size:0.8rem;color:#94a3b8;margin-top:0.5rem;">检测损伤类型、评估边缘场景、生成校准建议</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>路面损伤检测智能体 | 基于阿里云通义千问 qwen-vl 视觉大模型 | AI4S 课程大作业</p>
+    <p>江汉大学 数字建造与爆破工程学院 | 2025级土木水利专业</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
