@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: road-damage-detector
+    env: node
+    buildCommand: npm install express
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production

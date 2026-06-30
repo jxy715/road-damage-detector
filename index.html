@@ -293,8 +293,8 @@
     </div>
     <div class="api-row" style="margin-bottom:0;">
       <label></label>
-      <button onclick="fillVercelProxy()" style="padding:0.35rem 0.7rem;font-size:0.78rem;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;cursor:pointer;color:#4338ca;white-space:nowrap;">
-        一键填入 Vercel 代理
+      <button onclick="fillRenderProxy()" style="padding:0.35rem 0.7rem;font-size:0.78rem;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;cursor:pointer;color:#4338ca;white-space:nowrap;">
+        一键填入 Render 代理
       </button>
       <button onclick="fillLocalProxy()" style="padding:0.35rem 0.7rem;font-size:0.78rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;cursor:pointer;color:#166534;white-space:nowrap;">
         一键填入本地代理
@@ -304,7 +304,7 @@
     <div class="proxy-help">
       <strong>当前模式：</strong><span id="modeDisplay">直连</span>
       &nbsp;|&nbsp;
-      <strong>Vercel 代理已部署：</strong><code id="vercelUrl" style="background:#eef2ff;color:#4338ca;">road-damage-detector-psi.vercel.app</code>
+      <a href="https://render.com/deploy?repo=https://github.com/jxy715/road-damage-detector" target="_blank" style="color:#4f46e5;font-weight:600;">一键部署到 Render（免费，国内可访问）→</a>
     </div>
   </div>
 
@@ -493,9 +493,15 @@ function saveProxy() {
 }
 
 const VERCE_DEFAULT_URL = 'https://road-damage-detector-psi.vercel.app';
+const RENDER_DEFAULT_URL = 'https://road-damage-detector.onrender.com';
 
 function fillVercelProxy() {
   document.getElementById('proxyInput').value = VERCE_DEFAULT_URL;
+  saveProxy();
+}
+
+function fillRenderProxy() {
+  document.getElementById('proxyInput').value = RENDER_DEFAULT_URL;
   saveProxy();
 }
 

@@ -1,0 +1,29 @@
+# Serverless Devs YAML - 阿里云函数计算 FC 部署
+edition: 3.0.0
+name: road-damage-detector-proxy
+access: default
+
+resources:
+  fc-proxy:
+    component: fc3
+    props:
+      region: cn-hangzhou
+      functionName: dashscope-proxy
+      description: 路面损伤检测 DashScope API 代理
+      runtime: nodejs20
+      handler: index.handler
+      memorySize: 512
+      timeout: 60
+      code: ./
+      cpu: 0.5
+      diskSize: 512
+      instanceConcurrency: 100
+      environmentVariables:
+        NODE_ENV: production
+      triggers:
+        - triggerConfig:
+            methods: [GET, POST, OPTIONS]
+            authType: anonymous
+            disableURLInternet: false
+          triggerName: httpTrigger
+          triggerType: http
