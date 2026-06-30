@@ -14,32 +14,33 @@
 
 ## 快速开始
 
-### 1. 获取 API Key
+### 方式一：Vercel 一键部署（推荐，无需本地运行）
 
-前往 [阿里云 DashScope](https://dashscope.aliyun.com/) 注册并获取 API Key。
+点击下方按钮，1 分钟内完成部署，得到一个可直接使用的 URL：
 
-### 2. 启动本地代理
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/jxy715/road-damage-detector)
+
+或手动操作：
+1. 打开 [vercel.com/new](https://vercel.com/new)
+2. 用 GitHub 账号登录，导入 `jxy715/road-damage-detector`
+3. 点击 Deploy，等待 30 秒
+4. 访问 Vercel 分配的 URL（如 `road-damage-detector.vercel.app`）
+5. 输入 API Key + 上传图片 → 开始检测
+
+> Vercel 免费额度：100GB 带宽/月，1000 次部署/天，个人使用完全够用。
+
+### 方式二：本地运行
 
 ```bash
-# 克隆项目
 git clone https://github.com/jxy715/road-damage-detector.git
 cd road-damage-detector
-
-# 安装依赖（仅需 Python 3）
-# 无需额外安装，使用标准库
-
-# 启动一体化服务器
 python app.py
+# 浏览器打开 http://127.0.0.1:5000
 ```
 
-### 3. 打开应用
+### 开始检测
 
-- **本地访问**: 浏览器打开 `http://127.0.0.1:5000`
-- **在线访问**: [jxy715.github.io/road-damage-detector](https://jxy715.github.io/road-damage-detector/)（需本地运行代理）
-
-### 4. 开始检测
-
-1. 输入 DashScope API Key
+1. 输入 [DashScope API Key](https://dashscope.aliyun.com/)
 2. 上传路面图片
 3. 选择关注的边缘场景
 4. 点击"开始分析"
@@ -47,14 +48,15 @@ python app.py
 ## 技术架构
 
 ```
-┌─────────────────┐     ┌──────────────┐     ┌───────────────┐
-│   浏览器前端      │ ──→ │  app.py 代理  │ ──→ │  DashScope API │
-│  (HTML/CSS/JS)  │ ←── │  (Python)    │ ←── │  (qwen-vl)    │
-└─────────────────┘     └──────────────┘     └───────────────┘
+┌─────────────────┐     ┌──────────────────┐     ┌───────────────┐
+│   浏览器前端      │ ──→ │  api/proxy.js     │ ──→ │  DashScope API │
+│  (HTML/CSS/JS)  │ ←── │  (Vercel 云函数)  │ ←── │  (qwen-vl)    │
+└─────────────────┘     └──────────────────┘     └───────────────┘
 ```
 
 - **前端**: 原生 HTML/CSS/JavaScript
-- **代理**: Python http.server（解决浏览器 CORS 限制）
+- **后端代理**: Vercel Serverless Function（自动解决 CORS，无需本地运行）
+- **本地备选**: Python app.py（`python app.py`，适合离线开发）
 - **AI模型**: 阿里云 qwen-vl-plus
 
 ## 项目结构
@@ -62,12 +64,15 @@ python app.py
 ```
 road-damage-detector/
 ├── index.html        # 主页面
-├── app.py            # 一体化服务器（启动入口）
+├── api/
+│   └── proxy.js      # Vercel Serverless 代理（云端部署用）
+├── app.py            # Python 本地服务器（本地开发用）
+├── vercel.json       # Vercel 部署配置
 ├── 启动服务器.bat     # Windows 一键启动
 ├── css/
 │   └── style.css     # 样式
 ├── js/
-│   └── app.js        # 核心逻辑
+│   └── app.js        # 核心逻辑（自动识别部署环境）
 └── assets/           # 静态资源
 ```
 
