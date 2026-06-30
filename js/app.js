@@ -1,11 +1,21 @@
 /* ===== Road Damage Detection Agent - Core Logic ===== */
 
 // API代理路径 - 自动适配部署环境
-// 本地: http://127.0.0.1:5000 → 同源 /proxy
-// GitHub Pages: jxy715.github.io → 跨域请求 http://127.0.0.1:5000/proxy（代理已配置CORS）
-const PROXY_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
-  ? '/proxy'
-  : 'http://127.0.0.1:5000/proxy';
+// 本地 (python app.py):  同源 /proxy
+// Vercel 部署:           同源 /api/proxy (serverless function)
+// GitHub Pages / 其他:   需要本地代理 http://127.0.0.1:5000/proxy
+function getProxyUrl() {
+  const host = window.location.hostname;
+  if (host === '127.0.0.1' || host === 'localhost') {
+    return '/proxy';
+  }
+  // Vercel 部署或 CloudStudio：服务端代理在同一域名下
+  if (host.includes('vercel.app') || host.includes('codebuddy.work')) {
+    return '/api/proxy';
+  }
+  return 'http://127.0.0.1:5000/proxy';
+}
+const PROXY_URL = getProxyUrl();
 
 // ===== State Management =====
 const state = {
