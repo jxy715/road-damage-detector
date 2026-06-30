@@ -22,7 +22,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/jxyiii/road-damage-detector.git
+git clone https://github.com/jxy715/road-damage-detector.git
 cd road-damage-detector
 
 # 安装依赖（仅需 Python 3）
@@ -35,7 +35,7 @@ python app.py
 ### 3. 打开应用
 
 - **本地访问**: 浏览器打开 `http://127.0.0.1:5000`
-- **在线访问**: [jxyiii.github.io/road-damage-detector](https://jxyiii.github.io/road-damage-detector/)（需本地运行代理）
+- **在线访问**: [jxy715.github.io/road-damage-detector](https://jxy715.github.io/road-damage-detector/)（需本地运行代理）
 
 ### 4. 开始检测
 
