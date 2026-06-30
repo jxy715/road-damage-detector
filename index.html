@@ -287,16 +287,24 @@
     </div>
     <div class="api-row">
       <label>代理地址</label>
-      <input type="text" id="proxyInput" placeholder="留空=直连模式 | 或填入 Vercel 代理地址">
+      <input type="text" id="proxyInput" placeholder="留空=直连 | 已为你部署好了 Vercel 代理 ↓">
       <button class="btn-green" onclick="saveProxy()">启用代理</button>
       <button class="btn-orange" onclick="clearProxy()">清除</button>
+    </div>
+    <div class="api-row" style="margin-bottom:0;">
+      <label></label>
+      <button onclick="fillVercelProxy()" style="padding:0.35rem 0.7rem;font-size:0.78rem;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;cursor:pointer;color:#4338ca;white-space:nowrap;">
+        一键填入 Vercel 代理
+      </button>
+      <button onclick="fillLocalProxy()" style="padding:0.35rem 0.7rem;font-size:0.78rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;cursor:pointer;color:#166534;white-space:nowrap;">
+        一键填入本地代理
+      </button>
     </div>
     <div id="apiStatus" class="api-status pending">请先输入并保存 API Key</div>
     <div class="proxy-help">
       <strong>当前模式：</strong><span id="modeDisplay">直连</span>
       &nbsp;|&nbsp;
-      直连不通？<a href="https://vercel.com/new/clone?repository-url=https://github.com/jxy715/road-damage-detector" target="_blank">一键部署 Vercel 代理（免费）→</a>
-      部署后把得到的 <code>https://xxx.vercel.app</code> 填入代理地址即可。
+      <strong>Vercel 代理已部署：</strong><code id="vercelUrl" style="background:#eef2ff;color:#4338ca;">road-damage-detector-psi.vercel.app</code>
     </div>
   </div>
 
@@ -482,6 +490,18 @@ function saveProxy() {
   localStorage.setItem('proxy_url', url);
   updateStatusDisplay();
   showToast('代理模式已启用: ' + url, 'success');
+}
+
+const VERCE_DEFAULT_URL = 'https://road-damage-detector-psi.vercel.app';
+
+function fillVercelProxy() {
+  document.getElementById('proxyInput').value = VERCE_DEFAULT_URL;
+  saveProxy();
+}
+
+function fillLocalProxy() {
+  document.getElementById('proxyInput').value = 'http://127.0.0.1:5000';
+  saveProxy();
 }
 
 function clearProxy() {
