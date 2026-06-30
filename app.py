@@ -84,10 +84,10 @@ class RoadDamageAgentServer(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """处理 POST 请求"""
-        if self.path == "/proxy":
+        if self.path in ("/proxy", "/api/proxy"):
             self._handle_proxy()
         else:
-            self._send_response(404, "404: 请使用 /proxy 路径发送 API 请求")
+            self._send_response(404, "404: 请使用 /proxy 或 /api/proxy 路径发送 API 请求")
 
     # ======================== 静态文件服务 ========================
 
