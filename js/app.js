@@ -2,7 +2,7 @@
 
 // API代理路径 - 自动适配部署环境
 // 本地: http://127.0.0.1:5000 → 同源 /proxy
-// GitHub Pages: jxyiii.github.io → 跨域请求 http://127.0.0.1:5000/proxy（代理已配置CORS）
+// GitHub Pages: jxy715.github.io → 跨域请求 http://127.0.0.1:5000/proxy（代理已配置CORS）
 const PROXY_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
   ? '/proxy'
   : 'http://127.0.0.1:5000/proxy';
